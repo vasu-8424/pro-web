@@ -23,12 +23,17 @@ export default function ChatVisualization() {
   const [errorString, setErrorString] = useState<string | null>(null);
 
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
 
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     scrollToBottom();
   }, [messages, loading]);
 
