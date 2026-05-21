@@ -1,0 +1,6 @@
+{
+  "name": "ProSite360",
+  "description": "Premium cinematic SaaS and real-time intelligence operating system for futuristic construction sites and infrastructure management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
