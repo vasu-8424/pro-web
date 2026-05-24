@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, lazy, Suspense } from "react";
 import {
   Sparkles,
   Bot,
@@ -31,12 +31,12 @@ import {
   MonitorCheck,
   RefreshCw
 } from "lucide-react";
-import CityScene from "./components/CityScene";
-import RoleWheel from "./components/RoleWheel";
-import ChatVisualization from "./components/ChatVisualization";
-import CursorScrollerScene from "./components/CursorScrollerScene";
-import AnimatedBackground from "./components/AnimatedBackground";
-import CinematicStorytelling from "./components/CinematicStorytelling";
+const CityScene = lazy(() => import("./components/CityScene"));
+const RoleWheel = lazy(() => import("./components/RoleWheel"));
+const ChatVisualization = lazy(() => import("./components/ChatVisualization"));
+const CursorScrollerScene = lazy(() => import("./components/CursorScrollerScene"));
+const AnimatedBackground = lazy(() => import("./components/AnimatedBackground"));
+const CinematicStorytelling = lazy(() => import("./components/CinematicStorytelling"));
 import { ConstructionMedia, Activity, ProjectLogInput, LabourMetric, FinanceSummary } from "./types";
 
 // Static premium mock presets to keep the interface highly structured and real from startup
@@ -825,7 +825,9 @@ The reporting system is operating in high-fidelity demonstration compliance beca
     <div id="prosite360-app" className={`min-h-screen bg-[#050505] text-[#F8FAFC] font-sans relative overflow-x-hidden selection:bg-purple-900 selection:text-white transition-all duration-1000 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
       
       {/* Premium Animated Structural Scaffold Background */}
-      <AnimatedBackground />
+      <Suspense fallback={null}>
+        <AnimatedBackground />
+      </Suspense>
 
       {/* RAZORPAY GATEWAY MODAL OVERLAY */}
       {paymentStep !== "idle" && (
@@ -1066,7 +1068,9 @@ The reporting system is operating in high-fidelity demonstration compliance beca
 
       {/* Interactive Citadel 3D Layer Showcase Centerpiece */}
       <div id="citadel-dismantle-section" className="max-w-7xl mx-auto px-6 pt-6 md:pt-10 relative z-10">
-        <CinematicStorytelling />
+        <Suspense fallback={<div className="h-[520px] bg-zinc-900/50 animate-pulse rounded-2xl border border-white/5" />}>
+          <CinematicStorytelling />
+        </Suspense>
       </div>
 
       {/* STORY FLOW CANVAS - SPLIT DESIGN GRID */}
@@ -1173,7 +1177,9 @@ The reporting system is operating in high-fidelity demonstration compliance beca
               <span>VECTOR MODELVIEW CHOREOGRAPHY</span>
               <span>FOV: 45°</span>
             </div>
-            <CityScene />
+            <Suspense fallback={<div className="h-[250px] bg-zinc-900/50 animate-pulse rounded-xl" />}>
+              <CityScene />
+            </Suspense>
           </div>
 
           {/* Footer of the copy area: Trust logos */}
@@ -1272,7 +1278,9 @@ The reporting system is operating in high-fidelity demonstration compliance beca
 
           {/* SECTION 8 — MULTI-ROLE ADAPTIVE WORKSPACE WHEEL */}
           <div className="glass-panel-heavy p-6 rounded-2xl relative overflow-hidden">
-            <RoleWheel />
+            <Suspense fallback={<div className="h-[400px] bg-zinc-900/50 animate-pulse rounded-xl" />}>
+              <RoleWheel />
+            </Suspense>
           </div>
 
         </section>
@@ -1280,7 +1288,9 @@ The reporting system is operating in high-fidelity demonstration compliance beca
 
       {/* SECTION 9 — INTERACTIVE CINEMATIC BLUEPRINTS & CURSOR FEED SCROLLER (FULL-WIDTH CENTERPIECE) */}
       <div id="scanner-section" className="relative z-10 max-w-7xl mx-auto px-6 py-6 md:py-12 w-full">
-        <CursorScrollerScene />
+        <Suspense fallback={<div className="h-[300px] bg-zinc-900/50 animate-pulse rounded-2xl border border-white/5" />}>
+          <CursorScrollerScene />
+        </Suspense>
       </div>
 
       {/* SUBSEQUENT SECTIONS (DECOMPRESSED SPACIOUS FULL-WIDTH FLOW) */}
@@ -1327,54 +1337,54 @@ The reporting system is operating in high-fidelity demonstration compliance beca
           </div>
 
           {/* Input logs parameters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs mb-6 bg-zinc-950/40 p-4 sm:p-6 rounded-2xl border border-white/5">
             <div>
-              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1 font-bold">Reporting Date</label>
+              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1.5 font-bold tracking-wider">Reporting Date</label>
               <input
                 type="date"
                 value={dprInput.date}
                 onChange={(e) => setDprInput({ ...dprInput, date: e.target.value })}
-                className="w-full bg-zinc-900/80 border border-white/5 p-2 rounded-lg text-slate-200 focus:outline-[#7C3AED]"
+                className="w-full bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-800/60 p-2.5 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED]"
               />
             </div>
 
             <div>
-              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1 font-bold">Site Weather Metric</label>
+              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1.5 font-bold tracking-wider">Site Weather Metric</label>
               <input
                 type="text"
                 value={dprInput.weather}
                 onChange={(e) => setDprInput({ ...dprInput, weather: e.target.value })}
-                className="w-full bg-zinc-900/80 border border-white/5 p-2 rounded-lg text-slate-200 focus:outline-[#7C3AED]"
+                className="w-full bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-800/60 p-2.5 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED]"
               />
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1 font-bold">Meticulous Completed Progress</label>
+            <div className="sm:col-span-2">
+              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1.5 font-bold tracking-wider">Meticulous Completed Progress</label>
               <textarea
                 rows={2}
                 value={dprInput.progress}
                 onChange={(e) => setDprInput({ ...dprInput, progress: e.target.value })}
-                className="w-full bg-zinc-900/80 border border-white/5 p-2 rounded-lg text-slate-200 focus:outline-[#7C3AED]"
+                className="w-full bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-800/60 p-2.5 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED]"
               />
             </div>
 
             <div>
-              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1 font-bold">Registered Logistics Delays</label>
+              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1.5 font-bold tracking-wider">Registered Logistics Delays</label>
               <input
                 type="text"
                 value={dprInput.delays}
                 onChange={(e) => setDprInput({ ...dprInput, delays: e.target.value })}
-                className="w-full bg-zinc-900/80 border border-white/5 p-2 rounded-lg text-slate-200 focus:outline-[#7C3AED]"
+                className="w-full bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-800/60 p-2.5 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED]"
               />
             </div>
 
             <div>
-              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1 font-bold">Material logistics usage today</label>
+              <label className="block text-zinc-400 font-mono text-[10px] uppercase mb-1.5 font-bold tracking-wider">Material logistics usage today</label>
               <input
                 type="text"
                 value={dprInput.material}
                 onChange={(e) => setDprInput({ ...dprInput, material: e.target.value })}
-                className="w-full bg-zinc-900/80 border border-white/5 p-2 rounded-lg text-slate-200 focus:outline-[#7C3AED]"
+                className="w-full bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-800/60 p-2.5 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED]"
               />
             </div>
           </div>
@@ -1609,7 +1619,9 @@ The reporting system is operating in high-fidelity demonstration compliance beca
             <span>PROSITE360 COMPREHENSIVE CONSOLE ADVISOR SYSTEM</span>
             <span className="text-purple-400 font-bold">SYNC: ACTIVE V1</span>
           </div>
-          <ChatVisualization />
+          <Suspense fallback={<div className="h-[520px] bg-zinc-900/50 animate-pulse rounded-xl" />}>
+            <ChatVisualization />
+          </Suspense>
         </div>
 
         {/* SECTION 7 — FINANCIAL CONTROL & RAZORPAY INTEGRATION */}
@@ -1675,33 +1687,33 @@ The reporting system is operating in high-fidelity demonstration compliance beca
           <div className="space-y-3.5">
             <label className="block text-[10px] font-mono text-zinc-500 uppercase font-bold">UNPAID VENDOR INVOICES QUEUED FOR DISPATCH</label>
             
-            <div className="space-y-2">
-              <div className="bg-zinc-900/60 p-3.5 rounded-xl border border-white/5 flex items-center justify-between gap-4">
+            <div className="space-y-3">
+              <div className="bg-zinc-900/40 p-4 rounded-xl border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-zinc-900/80 hover:border-purple-500/30 transition-all group">
                 <div>
-                  <h4 className="text-xs font-semibold text-slate-200">Aditya Birla Steel Logistics - Block B</h4>
-                  <p className="text-[10px] text-zinc-500 font-mono mt-0.5">INVOICE: #ABB-9021 // DUE IN: 3 Days</p>
+                  <h4 className="text-xs font-semibold text-slate-200 group-hover:text-purple-300 transition-colors">Aditya Birla Steel Logistics - Block B</h4>
+                  <p className="text-[10px] text-zinc-500 font-mono mt-1">INVOICE: #ABB-9021 // DUE IN: <span className="text-amber-400 font-bold">3 Days</span></p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs font-semibold text-white">₹4,80,000.00</span>
+                <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-5">
+                  <span className="font-mono text-sm sm:text-xs font-black text-white">₹4,80,000.00</span>
                   <button
                     onClick={() => startRazorSim(480000, "Aditya Birla Steel Logistics Row B")}
-                    className="glass-btn-primary px-3.5 py-1.5 text-purple-300 hover:text-white text-[10.5px] font-mono font-bold rounded-lg cursor-pointer whitespace-nowrap"
+                    className="glass-btn-primary px-4 py-2 text-white hover:text-white text-[10px] sm:text-[10.5px] font-mono font-bold rounded-lg cursor-pointer whitespace-nowrap shadow-lg shadow-purple-900/20 active:scale-95 transition-all"
                   >
                     PAY WITH RAZORPAY
                   </button>
                 </div>
               </div>
 
-              <div className="bg-zinc-900/60 p-3.5 rounded-xl border border-white/5 flex items-center justify-between gap-4">
+              <div className="bg-zinc-900/40 p-4 rounded-xl border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-zinc-900/80 hover:border-purple-500/30 transition-all group">
                 <div>
-                  <h4 className="text-xs font-semibold text-slate-200">Dynamic Fuel Dispensation Node 1</h4>
-                  <p className="text-[10px] text-zinc-500 font-mono mt-0.5">INVOICE: #DFD-11100 // DUE IN: Immediate</p>
+                  <h4 className="text-xs font-semibold text-slate-200 group-hover:text-purple-300 transition-colors">Dynamic Fuel Dispensation Node 1</h4>
+                  <p className="text-[10px] text-zinc-500 font-mono mt-1">INVOICE: #DFD-11100 // DUE IN: <span className="text-red-400 font-bold">Immediate</span></p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs font-semibold text-white">₹4,80,000.00</span>
+                <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-5">
+                  <span className="font-mono text-sm sm:text-xs font-black text-white">₹4,80,000.00</span>
                   <button
                     onClick={() => startRazorSim(480000, "Dynamic Fuel Logistics (Tower 2 heavy machinery)")}
-                    className="glass-btn-primary px-3.5 py-1.5 text-purple-300 hover:text-white text-[10.5px] font-mono font-bold rounded-lg cursor-pointer whitespace-nowrap"
+                    className="glass-btn-primary px-4 py-2 text-white hover:text-white text-[10px] sm:text-[10.5px] font-mono font-bold rounded-lg cursor-pointer whitespace-nowrap shadow-lg shadow-purple-900/20 active:scale-95 transition-all"
                   >
                     PAY WITH RAZORPAY
                   </button>
@@ -1716,14 +1728,16 @@ The reporting system is operating in high-fidelity demonstration compliance beca
             
             <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
               {finance.transactions.map((txn) => (
-                <div key={txn.id} className="flex justify-between items-center text-[11px] font-mono py-1 border-b border-white/5">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-1.5 h-1.5 rounded-full ${txn.type === "credit" ? "bg-emerald-400" : "bg-purple-400"}`} />
-                    <span className="text-zinc-300 truncate max-w-[280px]">{txn.description}</span>
+                <div key={txn.id} className="flex flex-col sm:flex-row justify-between sm:items-center text-[11px] font-mono py-2 border-b border-white/5 gap-2 hover:bg-white/5 px-2 rounded-lg transition-colors">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 ${txn.type === "credit" ? "bg-emerald-500/20 text-emerald-400" : "bg-purple-500/20 text-purple-400"}`}>
+                      {txn.type === "credit" ? <TrendingUp className="w-3 h-3" /> : <TrendingUp className="w-3 h-3 rotate-180" />}
+                    </div>
+                    <span className="text-zinc-300 truncate max-w-[200px] sm:max-w-[280px]">{txn.description}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-zinc-500">{txn.timestamp}</span>
-                    <span className={txn.type === "credit" ? "text-emerald-400 font-bold" : "text-purple-400 font-bold"}>
+                  <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pl-7 sm:pl-0">
+                    <span className="text-zinc-500 text-[10px]">{txn.timestamp}</span>
+                    <span className={`text-[11.5px] tracking-wide ${txn.type === "credit" ? "text-emerald-400 font-bold" : "text-purple-400 font-bold"}`}>
                       {txn.type === "credit" ? "+" : "-"} ₹{txn.amount.toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -1837,20 +1851,7 @@ The reporting system is operating in high-fidelity demonstration compliance beca
             <div>
               © 2026 ProSite360 Inc. All core blueprints sandbox secured in server container memory.
             </div>
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 text-zinc-500 text-xs mt-2">
-              <span>Made with</span>
-              <a 
-                href="https://www.rubyai.co.in" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-purple-950/30 hover:bg-purple-950/60 border border-purple-500/20 hover:border-purple-400 hover:shadow-[0_0_15px_rgba(168,85,247,0.35)] rounded-full text-slate-200 hover:text-white transition-all duration-300 font-bold group"
-              >
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-[#00E5FF] bg-clip-text text-transparent group-hover:from-purple-350 group-hover:to-pink-350">rubyAI</span>
-                <span className="text-purple-400 text-xs sm:text-[13px] animate-pulse group-hover:scale-125 transition-transform">💎</span>
-                <span className="h-3 w-px bg-purple-500/20" />
-                <span className="underline decoration-purple-500/25 text-[10px] sm:text-xs font-semibold text-purple-300 group-hover:text-[#00E5FF]">www.rubyai.co.in</span>
-              </a>
-            </div>
+
           </div>
           <div className="flex items-center gap-4 flex-shrink-0">
             <div className="flex items-center gap-1">

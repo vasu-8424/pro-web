@@ -69,6 +69,7 @@ Write with a commanding, elite, professional construction management consulting 
       });
       reportText = result.text;
     } catch (apiErr: any) {
+      console.error("Gemini DPR Error:", apiErr);
       console.warn("Gemini API call bypassed or failed. Synthesizing high-fidelity fallback report.");
       reportText = `### 📋 EXECUTIVE OVERVIEW: ON-SCHEDULE (GREEN STATUS)
 ProSite360 high-fidelity intelligence analysis confirms overall project milestones are advancing on schedule. The structural deck integration exhibits high standard alignment.
@@ -133,7 +134,8 @@ Response:`;
         contents: systemPrompt,
       });
       replyText = result.text;
-    } catch (chatApiErr: any) {
+    } catch (apiErr: any) {
+      console.error("Gemini Chat Error:", apiErr);
       console.warn("Gemini Chat call bypassed or failed. Synthesizing high-fidelity fallback response.");
       
       const queryLower = lastMessage.toLowerCase();

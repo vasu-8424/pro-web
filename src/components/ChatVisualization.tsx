@@ -22,11 +22,16 @@ export default function ChatVisualization() {
   const [loading, setLoading] = useState(false);
   const [errorString, setErrorString] = useState<string | null>(null);
 
-  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
 
   const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   };
 
   useEffect(() => {
@@ -125,7 +130,7 @@ export default function ChatVisualization() {
       </div>
 
       {/* Messages Feed Area */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-zinc-950/40 bg-dot-matrix flex flex-col">
+      <div ref={scrollContainerRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-zinc-950/40 bg-dot-matrix flex flex-col">
         {messages.map((m) => {
           const isModel = m.role === "model";
           return (
@@ -174,8 +179,6 @@ export default function ChatVisualization() {
             </div>
           </div>
         )}
-
-        <div ref={endOfMessagesRef} />
       </div>
 
       {/* Suggested Prompt Deck */}
