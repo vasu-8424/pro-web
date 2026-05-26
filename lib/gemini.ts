@@ -1,25 +1,54 @@
-import { GoogleGenAI } from "@google/genai";
+const GEMINI_MODEL = "gemini-2.5-flash";
 
-let aiClient: GoogleGenAI | null = null;
+function getApiKey(): string | null {
+  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || null;
+}
 
-function getAI(): GoogleGenAI | null {
-  if (!aiClient) {
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    if (!apiKey) {
-      return null;
-    }
-
-    aiClient = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          "user-agent": "aistudio-build"
-        }
-      }
-    });
+async function generateWithGemini(prompt: string): Promise<string> {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error("Gemini API key is not configured");
   }
 
-  return aiClient;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: prompt }]
+          }
+        ]
+      }),
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      throw new Error(`Gemini request failed (${response.status}): ${errorText || response.statusText}`);
+    }
+
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts
+      ?.map((part: { text?: string }) => part.text || "")
+      .join("")
+      .trim();
+
+    if (!text) {
+      throw new Error("Gemini response did not contain text");
+    }
+
+    return text;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export async function generateDprText(input: {
@@ -52,16 +81,7 @@ Format the report brilliantly with markdown style:
 Write with a commanding, elite, professional construction management consulting tone. Keep a clean, technical structure. DO NOT use generic conversational filler.`;
 
   try {
-    const ai = getAI();
-    if (!ai) {
-      throw new Error("Gemini API key is not configured");
-    }
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt
-    });
-
-    return result.text || "";
+    return await generateWithGemini(prompt);
   } catch (error) {
     console.error("Gemini DPR Error:", error);
     return `### 📋 EXECUTIVE OVERVIEW: ON-SCHEDULE (GREEN STATUS)
@@ -107,16 +127,7 @@ User query: ${lastMessage}
 Response:`;
 
   try {
-    const ai = getAI();
-    if (!ai) {
-      throw new Error("Gemini API key is not configured");
-    }
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: systemPrompt
-    });
-
-    return result.text || "";
+    return await generateWithGemini(systemPrompt);
   } catch (error) {
     console.error("Gemini Chat Error:", error);
 
