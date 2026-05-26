@@ -3,19 +3,32 @@ import { generateChatReply } from "../lib/gemini";
 
 async function readJsonBody(req: IncomingMessage): Promise<any> {
   const requestWithBody = req as IncomingMessage & { body?: unknown };
-  if (requestWithBody.body === undefined || requestWithBody.body === null) {
-    return {};
-  }
-
-  if (typeof requestWithBody.body === "string") {
-    try {
-      return requestWithBody.body.trim() ? JSON.parse(requestWithBody.body) : {};
-    } catch {
-      return {};
+  
+  if (requestWithBody.body !== undefined && requestWithBody.body !== null) {
+    if (typeof requestWithBody.body === "string") {
+      try {
+        return requestWithBody.body.trim() ? JSON.parse(requestWithBody.body) : {};
+      } catch {
+        return {};
+      }
     }
+    return requestWithBody.body;
   }
 
-  return requestWithBody.body;
+  // Fallback: Read from stream
+  return new Promise((resolve) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      try {
+        resolve(body.trim() ? JSON.parse(body) : {});
+      } catch {
+        resolve({});
+      }
+    });
+  });
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
