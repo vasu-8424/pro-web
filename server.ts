@@ -9,12 +9,13 @@ const app = express();
 app.use(express.json());
 
 const PORT = 3000;
+const FALLBACK_GEMINI_API_KEY = "AIzaSyDlMZggILycKtvwlQUtEs6z7NMZp7LcFV8";
 
 // Lazy initialization of Gemini client
 let aiClient: GoogleGenAI | null = null;
 function getAI(): GoogleGenAI {
   if (!aiClient) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || FALLBACK_GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error("GEMINI_API_KEY environment variable is required");
     }
