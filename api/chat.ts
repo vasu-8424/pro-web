@@ -1,93 +1,45 @@
 export default async function handler(req: any, res: any) {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
-    }
+    const aiExplanation = `**ProSite360 AI Assistant Architecture & Workflow**
 
-    let messages = req.body?.messages;
-    if (typeof req.body === 'string') {
-      try {
-        messages = JSON.parse(req.body).messages;
-      } catch (e) {
-        messages = [];
-      }
-    }
+Integrating a SIMPLE but powerful AI Assistant system into the existing ProSite360 Flutter + Supabase application WITHOUT disturbing any current functionality, UI, architecture, database structure, providers, navigation, or existing business logic.
 
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: "Messages array is required" });
-    }
+This is a lightweight AI productivity layer similar to Copilot suggestions, providing smart autofill, AI-generated summaries, and context-aware suggestions while preserving the current app workflow.
 
-    const lastMessage = messages[messages.length - 1]?.text || "";
-    const conversationHistoryString = messages
-      .slice(0, -1)
-      .map((message) => `${message.role === "user" ? "Client" : "ProSite360 Core"}: ${message.text}`)
-      .join("\n");
+### 1. AI DPR ASSISTANT
+Inside the DPR creation screen, when an engineer types work completed, labour updates, or material usage, the AI generates professional DPR summaries, sentence completion suggestions, and formatted engineering language. You can accept or reject suggestion chips instantly.
 
-    const systemPrompt = `You are ProSite360's Core Operating System Assistant.
-ProSite360 is an immersive, futuristic digital operating system for luxury infrastructure and high-rise construction.
-You are helping engineers, clients, accountants, and super-admins manage high-stakes operations.
-Respond confidently, masterfully, and with high industrial/architectural intelligence. Provide specific advisory answers, status estimates, or professional calculations if asked.
-Keep your answers professional and precise.
+### 2. AI SMART TYPING SUGGESTIONS
+Lightweight Copilot-style suggestions appear while typing notes, engineer updates, remarks, or comments. It suggests sentence completion, professional wording, and site terminology via non-intrusive UI chips without auto-overwriting user input.
 
-Conversation context:
-${conversationHistoryString}
+### 3. AI SITE UPDATE GENERATOR
+When an engineer uploads photos, videos, or progress updates, the AI automatically generates professional update captions, progress descriptions, and milestone summaries.
 
-User query: ${lastMessage}
+### 4. AI EXPENSE INSIGHTS
+Analyzes expenses and generates lightweight insights (e.g., unusual material spending, labour cost spikes, budget warnings) displayed via AI Insight Cards on the financial dashboards.
 
-Response:`;
+### 5. AI CLIENT Q&A ASSISTANT
+A simple AI chatbot inside the client dashboard. Clients can ask questions like "What is current project progress?" or "Any delays?" The AI answers accurately using existing Supabase project data, DPR reports, and milestone statuses as context.
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || null;
-    let replyText = "";
+### 6. AI RISK ALERTS
+Lightweight AI-based project alerts that detect delayed milestones, low workforce, budget overruns, or inactivity, displayed as warning banners and dashboard AI insights.
 
-    if (!apiKey) {
-      throw new Error("No API Key");
-    }
+### 7. AI MEETING SUMMARY GENERATOR
+Takes meeting notes or voice transcript text input and automatically generates concise summaries, action items, and pending tasks.
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+---
+**Tech Stack & Architecture:**
+- **Frontend:** Flutter, Riverpod
+- **Backend:** Supabase, OpenAI Chat Completions API
+- **Structure:** \`lib/features/ai_assistant/\` containing services, providers, models, and specialized UI widgets (suggestion chips, chat widget, insight cards).
+- **Security:** Async execution, debounced typing, API keys stored securely in \`.env\` via environment variables, not exposed in frontend builds.`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: systemPrompt }] }]
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status}`);
-    }
-
-    const data = await response.json();
-    replyText = data?.candidates?.[0]?.content?.parts
-      ?.map((part: any) => part.text || "")
-      .join("")
-      .trim();
-
-    if (!replyText) throw new Error("Empty response");
-
-    return res.status(200).json({ success: true, text: replyText });
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ success: true, text: aiExplanation }));
   } catch (error: any) {
-    const queryLower = (req.body?.messages?.[req.body?.messages?.length - 1]?.text || "").toLowerCase();
-    
-    if (queryLower.includes("budget") || queryLower.includes("cost") || queryLower.includes("payment") || queryLower.includes("finance")) {
-      return res.status(200).json({ success: true, text: "ProSite360 Financial Ledger indicates overall budget is ₹15.40 Cr, with ₹6.41 Cr expended. Payout clearances are secured through our integrated Razorpay escrow nodes." });
-    }
-
-    if (queryLower.includes("workforce") || queryLower.includes("labour") || queryLower.includes("worker") || queryLower.includes("attendance")) {
-      return res.status(200).json({ success: true, text: "Site attendance metrics report 1208 workers active today. Biometric check-in checks are operating at 99.8% standard compliance across all gate terminals." });
-    }
-
-    if (queryLower.includes("delay") || queryLower.includes("traffic") || queryLower.includes("weather")) {
-      return res.status(200).json({ success: true, text: "Logistics telemetry indicates minor delay constraints due to Outer Ring Road traffic (45 mins concrete truck deviation). Mitigation plans have been deployed to redistribute active crew onto indoor interior layouts." });
-    }
-
-    return res.status(200).json({
-      success: true,
-      text: "ProSite360 Core Intelligence synced successfully. The project is running ON-SCHEDULE with standard green telemetry status. Facade glazing and concrete columns are within optimal structural bounds."
-    });
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ error: "Server Error" }));
   }
 }
