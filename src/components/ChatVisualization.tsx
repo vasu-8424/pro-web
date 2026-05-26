@@ -90,13 +90,13 @@ export default function ChatVisualization() {
       }
     } catch (err: any) {
       console.error(err);
-      setErrorString("System communication error. Verify server state.");
+      setErrorString("Assistant temporarily using local fallback mode.");
       setMessages((prev) => [
         ...prev,
         {
           id: `model-err-${Date.now()}`,
           role: "model",
-          text: "⚠️ System offline or backend credentials not detected. Proceeding in localized demo environment. Telemetry details suggests: 'Check if GEMINI_API_KEY is configured in your Secrets panel.' Only simulated reports can be generated.",
+          text: "Assistant connection interrupted. Showing a local fallback response while the server reconnects.",
           timestamp: new Date()
         }
       ]);
