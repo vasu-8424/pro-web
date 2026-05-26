@@ -2,11 +2,11 @@ import { GoogleGenAI } from "@google/genai";
 
 let aiClient: GoogleGenAI | null = null;
 
-function getAI(): GoogleGenAI {
+function getAI(): GoogleGenAI | null {
   if (!aiClient) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY environment variable is required");
+      return null;
     }
 
     aiClient = new GoogleGenAI({
@@ -53,6 +53,9 @@ Write with a commanding, elite, professional construction management consulting 
 
   try {
     const ai = getAI();
+    if (!ai) {
+      throw new Error("Gemini API key is not configured");
+    }
     const result = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt
@@ -105,6 +108,9 @@ Response:`;
 
   try {
     const ai = getAI();
+    if (!ai) {
+      throw new Error("Gemini API key is not configured");
+    }
     const result = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: systemPrompt
